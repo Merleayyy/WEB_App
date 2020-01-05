@@ -26,21 +26,21 @@ class Entry(models.Model):
 		else:
 			return self.text
 
-class Pizza(models.Model):
-	name = models.CharField(max_length = 50)
-	date_added = models.DateTimeField(auto_now_add = True)
-	def __str__(self):
-		# 返回模型名字的字符串表示
-		return self.name
+# class Pizza(models.Model):
+# 	name = models.CharField(max_length = 50)
+# 	date_added = models.DateTimeField(auto_now_add = True)
+# 	def __str__(self):
+# 		# 返回模型名字的字符串表示
+# 		return self.name
 
-class Topping(models.Model):
-	pizza = models.ForeignKey(Pizza, on_delete = models.CASCADE)
-	name = models.CharField(max_length = 50)
-	date_added = models.DateTimeField(auto_now_add = True)
+# class Topping(models.Model):
+# 	pizza = models.ForeignKey(Pizza, on_delete = models.CASCADE)
+# 	name = models.CharField(max_length = 50)
+# 	date_added = models.DateTimeField(auto_now_add = True)
 
-	def __str__(self):
-		print(type(self.pizza))
-		# 返回模型名字的字符串表示
-		return self.name + '-Pizza:' + self.pizza.name
+# 	def __str__(self):
+# 		print(type(self.pizza))
+# 		# 返回模型名字的字符串表示
+# 		return self.name + '-Pizza:' + self.pizza.name
 
-		
+# 		
