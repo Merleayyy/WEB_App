@@ -10,8 +10,8 @@ class Topic(models.Model):
 		return self.text
 
 class Entry(models.Model):
-	# 学到的有关某个具体主题的具体知识
-	topic = models.ForeignKey(Topic, on_delete = models.CASCADE)# 将Topic设置为外键
+	# 学到的有关某个具体主题的具体知识，一个Topic有多个对应的entry
+	topic = models.ForeignKey(Topic, on_delete = models.CASCADE)# 将Topic设置为外键，有多对一的关联关系
 	text = models.TextField() # 设置text属性为不限制长度的文本
 	date_added = models.DateTimeField(auto_now_add = True) # 加入一个时间戳，每次调用模型时记录一个时间戳
 
