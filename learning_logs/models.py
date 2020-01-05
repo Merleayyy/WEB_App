@@ -5,9 +5,8 @@ class Topic(models.Model):
 	# 用户学习的主题
 	text = models.CharField(max_length = 200) # 设置text属性，CharField（length = x）由文本或者是字符组成的数据
 	date_added = models.DateTimeField(auto_now_add = True)# 设置date_added属性，自动将时间设置为当前的时间
-
 	def __str__(self):
-		# 返回模型名字的字符串表示
+		# 返回模型名字的字符串表示,也就代表着这个对象本身的值
 		return self.text
 
 class Entry(models.Model):
