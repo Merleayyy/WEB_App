@@ -12,6 +12,4 @@ urlpatterns = [
 
 	# 特定的主题界面
 	url(r'^topics/(?P<topic_id>\d+)/$', views.topic, name='topic')
-    # path('', views.index, name = 'index'),
-    # path('topic/', views.topics, name = 'topics')
 ]
