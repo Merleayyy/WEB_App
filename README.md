@@ -48,7 +48,7 @@ python manage.py startapp learning_logs
 
    ```python
    models.py
-   class table_name(models.Model):
+   class Topic(models.Model):
        # 设置text的属性为文本属性，之后传入的数据为文本数据
    	text = models.TextField()
        # 加入一个时间戳，每次调用模型时记录一个时间戳
@@ -87,12 +87,14 @@ python manage.py startapp learning_logs
    ```python
    admin.py
    --snip--
-   from learning_logs.models import table_name
+   from learning_logs.models import Topic
    
-   admin.site.register(table_name)
+   admin.site.register(Topic)
    ```
 
 ### 创建多个模型重复执行上述1,2,4步
+
+---
 
 ## 管理**URL**
 
@@ -122,13 +124,103 @@ from django.conf.urls import include, url
 
 from . import views
 urlpatterns = [
-	# 主页,也就是没有任何后缀时显示这个网页
+	# 主页,也就是没有任何后缀时调用views.index
 	url(r'^$', views.index, name = 'index'),
-	
+	# 网站后缀名为topics/调用views.topics
 	url(r'^topics/$', views.topics, name = 'topics'),
 
-	# 特定的主题界面
+	# 
 	url(r'^topics/(?P<topic_id>\d+)/$', views.topic, name='topic')
 ]
+```
+
+```python
+views.py
+from django.shortcuts import render
+
+from .models import Topic
+# views是用于收集好网页所需要的数据，然后再将其传送给网页
+def index(request):
+	# 在匹配到网址后，调用这里的函数
+    # 执行index.html
+	return render(request, 'learning_logs/index.html')
+
+def topics(request):
+	topics = Topic.objects.order_by('date_added') # 取得Topic对象，并按照date_added进行排序
+    
+    # 为了能在html中使用python中的变量，定义变量topics为上面的topics
+	context = {'topics': topics} 
+    # 传入html文件中通过context
+	return render(request, 'learning_logs/topics.html', context)
+
+
+def topic(request, topic_id):
+	# 显示单个主题及其所有的条目
+	topic = Topic.objects.get(id = topic_id)
+	entries = topic.entry_set.order_by('-date_added') # entry_set能返回一个topic关联对象的列表
+	context = {'topic':topic, 'entries':entries}
+	return render(request, 'learning_logs/topic.html', context)
+
+
+```
+
+```html
+learning_logs\templates\learning_logs\base.html
+
+<p>
+	<!-- 匹配到learning_logs.urls中的各个网址 -->
+	<a href="{% url 'learning_logs:index' %}">Learning Log</a>
+	<a href="{% url 'learning_logs:topics' %}">Topics</a>
+</p>
+
+{% block content %}{% endblock content %}
+
+index.html
+<!-- 继承base.html -->
+{% extends "learning_logs/base.html" %} 
+
+{% block content %}
+	<h1>Learning Log</h1>
+	<p>Learning Log helps you keep track of your learning, for any topic you're learning about.</p>
+{% endblock content %}
+
+topic.html
+{% extends "learning_logs/base.html" %}
+
+{% block content %}
+	<p>Topic: {{topic}}</p>
+
+	<p>Entries:</p>
+	
+	<ul>
+		{% for entry in entries %}
+			<li>
+				<p>{{ entry.date_added|date:'M d, Y H:i' }}</p>
+				<p>{{ entry.text|linebreaks}}</p>
+			</li>
+				{% empty %}
+			<li>
+				No topics have been added yet.
+			</li>
+
+		{%endfor%}
+	</ul>
+{% endblock content %}
+
+
+topics.html
+{% extends "learning_logs/base.html" %}
+{% block content %}
+	<p>Topics</p>
+	<ul>
+		{% for topic in topics %}
+			<li><a href="{% url 'learning_logs:topic' topic.id %}">{{ topic }} {{ name }}</a></li>
+		{% empty %}
+			<li>No topics have been added yet.</li>
+		{%endfor%}
+	</ul>
+{% endblock content %}
+
+
 ```
 
